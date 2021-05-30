@@ -14,7 +14,7 @@ from metmeet.settings import get_secret
 
 # Instantiate a Pusher Client
 pusher_client = Pusher(app_id=get_secret('PUSHER_APP_ID'),
-                       key=get_secret('PUSHER_KEY'),
+                       key=get_secret('PUSHER_APP_KEY'),
                        secret=get_secret('PUSHER_SECRET'),
                        ssl=True,
                        cluster=get_secret('PUSHER_CLUSTER')
@@ -25,7 +25,7 @@ pusher_client = Pusher(app_id=get_secret('PUSHER_APP_ID'),
 def index(request):
     User = get_user_model()
     all_users = User.objects.exclude(id=request.user.id).only('id', 'username')
-    return render(request, 'agora/index.html', {'allUsers': all_users})
+    return render(request, "agora/index.html", {'allUsers': all_users})
 
 
 def pusher_auth(request):
@@ -43,8 +43,11 @@ def pusher_auth(request):
 
 
 def generate_agora_token(request):
-    appID = os.environ.get('AGORA_APP_ID')
-    appCertificate = os.environ.get('AGORA_APP_CERTIFICATE')
+    appID = get_secret('AGORA_APP_ID')
+    print(appID)
+    appCertificate = get_secret('AGORA_APP_CERTIFICATE')
+    print(appCertificate)
+
     channelName = json.loads(request.body.decode(
         'utf-8'))['channelName']
     userAccount = request.user.username
